@@ -1,16 +1,14 @@
-WORK_PATH=$(OPENNAMES_SOURCE_DATA)
-JSON_FILE=$(WORK_PATH)/us_cia_world_leaders.json
+all: test
 
-all: scrape parse
+build:
+	docker build --no-cache -t un-sc-sanctions .
 
-$(JSON_FILE):
-	mkdir -p $(WORK_PATH)
-	python scrape.py $(JSON_FILE)
-
-scrape: $(JSON_FILE)
-
-parse: $(JSON_FILE)
-	python parse.py $(JSON_FILE)
+test: build
+	docker run -v $(PWD)/data:/data -e DATA_PATH=/data \
+		-e DATABASE_URI=sqlite:////data/data.sqlite \
+		-e AWS_ACCESS_KEY_ID=$(AWS_ACCESS_KEY_ID) \
+		-e AWS_SECRET_ACCESS_KEY=$(AWS_SECRET_ACCESS_KEY) \
+		un-sc-sanctions
 
 clean:
-	rm $(JSON_FILE)
+	rm -rf data
