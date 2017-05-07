@@ -13,7 +13,7 @@ URL = 'https://www.cia.gov/library/publications/resources/world-leaders-1/index.
 def element_text(el):
     if el is None:
         return
-    text = stringify(el.text_content())
+    text = stringify(unicode(el.text_content()))
     if text is not None:
         return collapse_spaces(text)
 
